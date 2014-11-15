@@ -9,7 +9,7 @@
   "author": "Artur Zayats",
   "license": "MIT",
   "dependencies": {
-    "async": "^0.9.0",
+    "async-each-series": "^0.1.1",
     "path-to-regexp": "^1.0.1"
   }
 }
