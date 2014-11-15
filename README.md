@@ -6,13 +6,12 @@ Install: `npm install derby-router`
 
 Add the package in your derby application:
 
-index.js
+*index.js*
 ```js
   var derby = require('derby');
   var app = derby.createApp('app', __filename);
 
   app.use(require('derby-router'));
-
 
   // named route
   app.get('main', '/main', function(page, model, params, next){
@@ -41,7 +40,7 @@ index.js
   });
 ```
 
-main.html
+*main.html*
 ```html
 <index:>
   <h1>Items:</h1>
@@ -55,4 +54,25 @@ main.html
 
 ```
 
+## Routes
 
+Derby-router allows to create 'get', 'post', 'put' and 'del' types of derby
+application routes, and the same four types of server routes.
+
+```js
+  // derby-app routes
+  app.get(...);
+  app.post(...);
+  app.put(...);
+  app.del(...);
+
+  // Server routes
+
+  app.serverGet(...);
+  app.serverPost(...);
+  app.serverPut(...);
+  app.serverDel(...);
+
+```
+
+### Route names and pathes
