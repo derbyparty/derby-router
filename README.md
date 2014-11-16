@@ -231,8 +231,8 @@ Let's write the user-module:
 ```js
 app.useRouterModule('user', {
   load: function(){
-    var userId = model.get('_session.userId');
-    this.user = model.at('users.' + userId);
+    var userId = this.model.get('_session.userId');
+    this.user = this.model.at('users.' + userId);
     this.addSubscriptions(user);
   },
   setup: function(){
@@ -288,7 +288,7 @@ Module 'friends' will be something like this:
 ```js
 app.useRouterModule('friends', {
   load: function(user){
-    var friends = model.query('users', user.user.path('friendIds'));
+    var friends = this.model.query('users', user.user.path('friendIds'));
     this.addSubscriptions(friends);
   }
   // We don't need setup-function here
@@ -308,7 +308,4 @@ Also, we can combine functions with modules, f.e.:
 ```js
   app.get('/main', isAdmin, ['user', 'friends']);
 ```
-
-
-
 
