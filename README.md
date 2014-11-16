@@ -4,7 +4,7 @@
 
 Install: `npm install derby-router`
 
-Add the package in your derby application:
+Add the package into your derby application:
 
 *index.js*
 ```js
@@ -101,11 +101,12 @@ Look at the examples:
 That is quite convinient for sipmle pathes, also possible to define only `pathes`,
 so `names` will be converted automatically. For example you can define the route
 like this:
+
 ```js
 app.get('/main');
 ```
 
-A few of examples:
+A few examples:
 
 | path | name |
 |------|------|
@@ -119,7 +120,8 @@ Of course the best way is to define both `name` and `path` explicitly.
 ### Path parameters
 
 Derby-router use [path-to-regexp](https://github.com/pillarjs/path-to-regexp) to
-parse pathes. It's express like parsing engine, so read the docs for it.
+parse pathes. It's express-like parsing engine. Take a look at
+[path-to-regexp](https://github.com/pillarjs/path-to-regexp) docs.
 
 Short list of possibilities:
 
@@ -166,8 +168,8 @@ params, and next. For example:
   });
 ```
 
-But also `this` in the function is `DerbyRouteController` witch provide some
-additional functionality (including to work with modules):
+But also `this` in the function is `DerbyRouteController` which provide some
+additional functionality:
 
 | property | description |
 |----------|-------------|
@@ -179,7 +181,7 @@ additional functionality (including to work with modules):
 | this.path | route-path |
 | this.next | next - like in parameters |
 | this.render | render-function (by default render template with the name of the route) |
-| this.loadModules | function witch accept a list of module-names to perform load-function of the modules |
+| this.loadModules | function which accept a list of module-names to perform load-function of the modules |
 | this.setupModules | the function subscribes to all of the loaded modules data and perform setup-functions of the loaded modules |
 | this.addSubscription | the function adds module subscription to the list. Subscribe to the list will be performed after in the setupModules-function |
 
@@ -343,7 +345,7 @@ example:
   });
 ```
 
-But also `this` in the function is `ServerRouteController` witch provide some
+But also `this` in the function is `ServerRouteController` which provide some
 additional functionality:
 
 | property | description |
