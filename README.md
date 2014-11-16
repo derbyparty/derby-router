@@ -150,11 +150,10 @@ will be rendered. There are two types of handlers:
 - handler-function
 - array of route-modules (more on this later)
 
-`options` - an object with options. At the moment you can define suth options:
+`options` - an object with options. At the moment you can define such options:
 
 - dontRender - boolean - if you don't with to render route by default
 - derbyController - function - to override default derby-application route-controller
-- serverController - function - to override default server route-controller
 
 #### Handler-functions
 
@@ -189,9 +188,9 @@ It's also possible to use a few functions in one route. For example:
 ```js
   function isAdmin(){
     if (this.model.get('_session.user.admin'){
-      next();
+      this.next();
     } else {
-      next('User should be an admin to get access!');
+      this.next('User should be an admin to get access!');
     }
   }
 
@@ -309,3 +308,158 @@ Also, we can combine functions with modules, f.e.:
   app.get('/main', isAdmin, ['user', 'friends']);
 ```
 
+### Server routes
+
+Server-routes are like derby-application routes, but without router-modules, and
+they have a little bit different API.
+
+Basically, like in derby-application routes we can use four methods for
+server-routes: 'get', 'post', 'put', 'del'.
+
+Syntax: `app.serverMethod(name?, path?, [handlers]*, options?)`
+
+`Method`: one of 'Get', 'Post', 'Put', 'Del'
+
+`name`: string - name of the route, you can use the name to get specific url
+using `pathFor`-view function
+
+`path`: string (should starts with '/')
+
+`handlers`: a list of handler-functions. May be omitted, if so nothing will
+happen
+
+`options` - an object with options. At the moment you can define such options:
+
+- serverController - function - to override default server route-controller
+
+#### Handler-functions
+
+Handler-functions accept usual expressjs parameters: req, res and next. For
+example:
+
+```js
+  app.serverGet('api:time', '/api/time', function(req, res, next){
+    res.json(Date.now());
+  });
+```
+
+But also `this` in the function is `ServerRouteController` witch provide some
+additional functionality:
+
+| property | description |
+|----------|-------------|
+| this.name | route name |
+| this.app | derby-app variable |
+| this.model | model - like in parameters |
+| this.params | params - like in derby-application routes |
+| this.path | route-path |
+| this.next | next - like in parameters |
+
+It's also possible to use a few functions in one route. For example:
+
+```js
+  function isAdmin(){
+    if (this.model.get('_session.user.admin'){
+      this.next();
+    } else {
+      this.next('User should be an admin to get access!');
+    }
+  }
+
+  app.serverGet('admin', isAdmin, function(){
+    // ...
+  });
+```js
+
+#### The way to hide server code from browser bundle
+
+Typical pattern is:
+
+```js
+var derby = require('derby');
+
+var app = derby.createApp('app', __filename);
+
+var serverRoutes = derby.util.serverRequire(module, './server') || {};
+
+// common derby-routes
+app.get(...);
+// ...
+
+// Server-routes
+app.serverPost('api:time', '/api/time', serverRoutes.time);
+app.serverPost('api:foo', '/api/foo', serverRoutes.foo);
+app.serverPost('api:bar', '/api/bar', serverRoutes.bar);
+```
+
+## View-function `pathFor`
+
+For all routes we can get specific url in templates using view-function
+`pathFor`, for example:
+
+```js
+app.get('item', '/items/:id', function(){
+  // ...
+});
+```
+
+```html
+  <a href="{{pathFor('item', #item.id)}}">{{#item.name}}</a>
+```
+
+There are two syntax for `pathFor`-function:
+
+Simple syntax: `pathFor(name, [param1, param2, ...])`
+
+- `name` - route-name
+- `param1`, `paramN` - route params in the order of the params in the
+route-path, from example:
+
+```js
+app.get('foobar', '/new/:foo/:bar+/(.*)', function(){
+  // ...
+});
+```
+
+```html
+  <!-- here we get /new/one/two/three/four url -->
+  <a href="{{pathFor('foobar', 'one', 'two', 'three/four')}}">foobar</a>
+```
+
+Object syntax: `pathFor(name, options)`
+
+- `name` - route-name
+- `options` - object of named route params, from example:
+
+```js
+app.get('foobar', '/new/:foo/:bar+/(.*)', function(){
+  // ...
+});
+```
+
+```html
+  <!-- here we get /new/one/two/three/four/five url -->
+  <a href="{{pathFor('foobar', {foo: 'one', bar: ['two', 'three', 'four'], 0: 'five'})}}">foobar</a>
+```
+
+Note 0 param. For unnamed params like (.*) we use number-keys.
+
+### Query and hash
+
+Additionally we can pass two special params in the pathFor options:
+
+- $query - query string or query-object
+- $hash - hash string
+
+For example:
+
+```js
+app.get('main', '/main', function(){
+  // ...
+});
+```
+
+```html
+  <!-- here we get /main?foo=abc#bar url -->
+  <a href="{{pathFor('main', {$query: {foo: 'abc'}, $hash: 'bar'})}}">foobar</a>
+```
