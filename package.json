@@ -1,6 +1,6 @@
 {
   "name": "derby-router",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "Derby-router",
   "main": "./lib/index.js",
   "scripts": {
