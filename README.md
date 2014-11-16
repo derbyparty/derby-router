@@ -403,7 +403,7 @@ app.get('item', '/items/:id', function(){
 ```
 
 ```html
-  <a href="{{pathFor('item', #item.id)}}">{{#item.name}}</a>
+<a href="{{pathFor('item', #item.id)}}">{{#item.name}}</a>
 ```
 
 There are two syntax for `pathFor`-function:
@@ -411,8 +411,8 @@ There are two syntax for `pathFor`-function:
 Simple syntax: `pathFor(name, [param1, param2, ...])`
 
 - `name` - route-name
-- `param1`, `paramN` - route params in the order of the params in the
-route-path, from example:
+- `param1`, `paramN` - route parameters in the order of the params in the
+route-path, for example:
 
 ```js
 app.get('foobar', '/new/:foo/:bar+/(.*)', function(){
