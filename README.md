@@ -88,7 +88,7 @@ Or even just:
 ```js
 app.get('main');
 ```
-Path will be extract automatically from the name: 'main' -> '/main'
+Path will be extracted automatically from the name: 'main' -> '/main'
 Look at the examples:
 
 | name | path |
