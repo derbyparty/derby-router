@@ -76,3 +76,61 @@ application routes, and the same four types of server routes.
 ```
 
 ### Route names and pathes
+
+First two parameters in routes are `name` and `path`. For example:
+```js
+app.get('main', '/main');
+```
+To tell the truth the order is not important, so you can define the route like
+this:
+```js
+app.get('/main', 'main');
+```
+Or even just:
+```js
+app.get('main');
+```
+Path will be extract automatically from the name: 'main' -> '/main'
+Look at the examples:
+
+| name | path |
+|------|------|
+| main | /main |
+| items:item | /items/item |
+
+That is quite convinient for sipmle pathes, also possible to define only `pathes`,
+so `names` will be converted automatically. For example you can define the route
+like this:
+```js
+app.get('/main');
+```
+
+A couple of examples:
+
+| path | name |
+|------|------|
+| /main | main |
+| /items/item | items:item |
+| /articles/:id | articles:id |
+| / | home (special case) |
+
+Of course the best way is to define both `name` and `path` explicitly.
+
+### Path parameters
+
+Derby-router use [path-to-regexp](https://github.com/pillarjs/path-to-regexp) to
+parse pathes. It's express like parsing engine, so read the docs for it.
+
+Short list of possibilities:
+
+| path | exemple | description |
+|------|------|------|
+| /:foo/:bar | /test/route | named parameters |
+| /:foo/:bar? | /test, /test/route | optionsl parameter |
+| /:foo* | /, /test, /test/test | zero or more |
+| /:foo+ | /test, /test/route | one or more |
+| /:foo(\\d+) | /123, /abc | custom match parameters |
+| /:foo/(.*) | /test/route | unnamed parameters |
+
+
+
