@@ -8,36 +8,36 @@ Add the package into your derby application:
 
 *index.js*
 ```js
-  var derby = require('derby');
-  var app = derby.createApp('app', __filename);
+var derby = require('derby');
+var app = derby.createApp('app', __filename);
 
-  app.use(require('derby-router'));
+app.use(require('derby-router'));
 
-  // named route
-  app.get('main', '/main', function(page, model, params, next){
-    var self = this;
-    var items = model.query('items', {});
-    items.subscribe(function(){
-      items.ref('_page.items');
-      page.render('main');
-    })
+// named route
+app.get('main', '/main', function(page, model, params, next){
+  var self = this;
+  var items = model.query('items', {});
+  items.subscribe(function(){
+    items.ref('_page.items');
+    page.render('main');
+  })
+});
+
+// name route using this.model
+// and this.render() it's equal page.render('item')
+app.get('item', '/item/:id', function(){
+  var self = this;
+  var item = this.model.at('items.' + this.params.id);
+  item.subscribe(function(){
+    item.ref('_page.item');
+    self.render();
   });
+});
 
-  // name route using this.model
-  // and this.render() it's equal page.render('item')
-  app.get('item', '/item/:id', function(){
-    var self = this;
-    var item = this.model.at('items.' + this.params.id);
-    item.subscribe(function(){
-      item.ref('_page.item');
-      self.render();
-    });
-  });
-
-  // server get route
-  app.serverGet('time', '/api/time', function(req, res, next){
-    res.json(Date.now());
-  });
+// server get route
+app.serverGet('time', '/api/time', function(req, res, next){
+  res.json(Date.now());
+});
 ```
 
 *main.html*
@@ -60,17 +60,17 @@ Derby-router allows to create 'get', 'post', 'put' and 'del' types of derby
 application routes, and the same four types of server routes.
 
 ```js
-  // derby-app routes
-  app.get(...);
-  app.post(...);
-  app.put(...);
-  app.del(...);
+// derby-app routes
+app.get(...);
+app.post(...);
+app.put(...);
+app.del(...);
 
-  // Server routes
-  app.serverGet(...);
-  app.serverPost(...);
-  app.serverPut(...);
-  app.serverDel(...);
+// Server routes
+app.serverGet(...);
+app.serverPost(...);
+app.serverPut(...);
+app.serverDel(...);
 ```
 
 ### Route names and pathes
@@ -161,9 +161,9 @@ For derby-application handler-functions accept usual parameters: page, model,
 params, and next. For example:
 
 ```js
-  app.get('main', '/main', function(page, model, params, next){
-    // ...
-  });
+app.get('main', '/main', function(page, model, params, next){
+  // ...
+});
 ```
 
 But also `this` in the function is `DerbyRouteController` which provide some
@@ -186,17 +186,17 @@ additional functionality:
 It's also possible to use a few functions in one route. For example:
 
 ```js
-  function isAdmin(){
-    if (this.model.get('_session.user.admin'){
-      this.next();
-    } else {
-      this.next('User should be an admin to get access!');
-    }
+function isAdmin(){
+  if (this.model.get('_session.user.admin'){
+    this.next();
+  } else {
+    this.next('User should be an admin to get access!');
   }
+}
 
-  app.get('admin', isAdmin, function(){
-    // ...
-  });
+app.get('admin', isAdmin, function(){
+  // ...
+});
 ```
 
 #### Router modules
@@ -207,15 +207,15 @@ It allow write routes declarative way and help to construct huge applications.
 Look at the example:
 
 ```js
-  app.get('/main', function(page, model, params, next){
-    var userId = model.get('_session.userId');
-    var user = model.at('users.' + userId);
+app.get('/main', function(page, model, params, next){
+  var userId = model.get('_session.userId');
+  var user = model.at('users.' + userId);
 
-    model.subscribe(user, function(){
-      user.ref('_page.user');
-      page.render('main');
-    });
+  model.subscribe(user, function(){
+    user.ref('_page.user');
+    page.render('main');
   });
+});
 ```
 
 The user-subscription is a frequent task. Often we should do it almost in all
@@ -243,42 +243,42 @@ app.useRouterModule('user', {
 and use it in our handler:
 
 ```js
-  app.get('/main', function(){
-    this.loadModules('user');
-    // setup all loaded modules
-    this.setupModules(function(){
-      // by defauld render use name of the route
-      // as a rendered template-name, so
-      // it's 'main'
-      this.render();
-    });
+app.get('/main', function(){
+  this.loadModules('user');
+  // setup all loaded modules
+  this.setupModules(function(){
+    // by defauld render use name of the route
+    // as a rendered template-name, so
+    // it's 'main'
+    this.render();
   });
+});
 ```
 
 but there is more convenient way to use router-modules:
 
 ```js
-  app.get('/main', ['user']);
+app.get('/main', ['user']);
 ```
 
 Let's imagine more complex example. We should subscribe to the current user and
 then to all his friends.
 
 ```js
-  app.get('/main', function(page, model, params, next){
-    var userId = model.get('_session.userId');
-    var user = model.at('users.' + userId);
+app.get('/main', function(page, model, params, next){
+  var userId = model.get('_session.userId');
+  var user = model.at('users.' + userId);
 
-    model.subscribe(user, function(){
-      user.ref('_page.user');
+  model.subscribe(user, function(){
+    user.ref('_page.user');
 
-      var friends = model.query('users', user.path('friendIds'));
+    var friends = model.query('users', user.path('friendIds'));
 
-      model.subscribe(friends, function(){
-        page.render('main');
-      };
-    });
+    model.subscribe(friends, function(){
+      page.render('main');
+    };
   });
+});
 ```
 
 Module 'friends' will be something like this:
@@ -296,7 +296,7 @@ app.useRouterModule('friends', {
 Note 'user'-parameter. It's a user-module. After, we can define router like this:
 
 ```js
-  app.get('/main', ['user', 'friends']);
+app.get('/main', ['user', 'friends']);
 ```
 
 Derby-router understand dependencies and make "depencency injections".
@@ -304,7 +304,7 @@ Derby-router understand dependencies and make "depencency injections".
 Also, we can combine functions with modules, f.e.:
 
 ```js
-  app.get('/main', isAdmin, ['user', 'friends']);
+app.get('/main', isAdmin, ['user', 'friends']);
 ```
 
 ### Server routes
@@ -337,9 +337,9 @@ Handler-functions accept usual expressjs parameters: req, res and next. For
 example:
 
 ```js
-  app.serverGet('api:time', '/api/time', function(req, res, next){
-    res.json(Date.now());
-  });
+app.serverGet('api:time', '/api/time', function(req, res, next){
+  res.json(Date.now());
+});
 ```
 
 But also `this` in the function is `ServerRouteController` which provide some
@@ -357,17 +357,17 @@ additional functionality:
 It's also possible to use a few functions in one route. For example:
 
 ```js
-  function isAdmin(){
-    if (this.model.get('_session.user.admin'){
-      this.next();
-    } else {
-      this.next('User should be an admin to get access!');
-    }
+function isAdmin(){
+  if (this.model.get('_session.user.admin'){
+    this.next();
+  } else {
+    this.next('User should be an admin to get access!');
   }
+}
 
-  app.serverGet('admin', isAdmin, function(){
-    // ...
-  });
+app.serverGet('admin', isAdmin, function(){
+  // ...
+});
 ```
 
 #### The way to hide server code from browser bundle
@@ -421,8 +421,8 @@ app.get('foobar', '/new/:foo/:bar+/(.*)', function(){
 ```
 
 ```html
-  <!-- here we get /new/one/two/three/four url -->
-  <a href="{{pathFor('foobar', 'one', 'two', 'three/four')}}">foobar</a>
+<!-- here we get /new/one/two/three/four url -->
+<a href="{{pathFor('foobar', 'one', 'two', 'three/four')}}">foobar</a>
 ```
 
 Object syntax: `pathFor(name, options)`
@@ -437,8 +437,10 @@ app.get('foobar', '/new/:foo/:bar+/(.*)', function(){
 ```
 
 ```html
-  <!-- here we get /new/one/two/three/four/five url -->
-  <a href="{{pathFor('foobar', {foo: 'one', bar: ['two', 'three', 'four'], 0: 'five'})}}">foobar</a>
+<!-- here we get /new/one/two/three/four url -->
+<a href="{{pathFor('foobar', {foo: 'one', bar: ['two', 'three'], 0: 'four'})}}">
+  foobar
+</a>
 ```
 
 Note 0 param. For unnamed params like (.*) we use number-keys.
@@ -459,6 +461,6 @@ app.get('main', '/main', function(){
 ```
 
 ```html
-  <!-- here we get /main?foo=abc#bar url -->
-  <a href="{{pathFor('main', {$query: {foo: 'abc'}, $hash: 'bar'})}}">foobar</a>
+<!-- here we get /main?foo=abc#bar url -->
+<a href="{{pathFor('main', {$query: {foo: 'abc'}, $hash: 'bar'})}}">foobar</a>
 ```
