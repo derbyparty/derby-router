@@ -105,7 +105,7 @@ like this:
 app.get('/main');
 ```
 
-A couple of examples:
+A few of examples:
 
 | path | name |
 |------|------|
@@ -126,11 +126,189 @@ Short list of possibilities:
 | path | exemple | description |
 |------|------|------|
 | /:foo/:bar | /test/route | named parameters |
-| /:foo/:bar? | /test, /test/route | optionsl parameter |
+| /:foo/:bar? | /test, /test/route | optional parameter |
 | /:foo* | /, /test, /test/test | zero or more |
 | /:foo+ | /test, /test/route | one or more |
 | /:foo(\\d+) | /123, /abc | custom match parameters |
 | /:foo/(.*) | /test/route | unnamed parameters |
+
+
+### Derby-application routes
+
+Syntax: `app.method(name?, path?, [handler]*, options?)`
+
+`method`: one of 'get', 'post', 'put', 'del'
+
+`name`: string - name of the route, you can use the name to get specific url
+using `pathFor`-view function
+
+`path`: string (should starts with '/')
+
+handler: one of a list of route-handlers. May be omitted, if so `name`-template
+will be rendered. There are two types of handlers:
+
+- handler-function
+- array of route-modules (more on this later)
+
+`options` - an object with options. At the moment you can define suth options:
+
+- dontRender - boolean - if you don't with to render route by default
+- derbyController - function - to override default derby-application route-controller
+- serverController - function - to override default server route-controller
+
+#### Handler-functions
+
+For derby-application handler-functions accept usual parameters: page, model,
+params, and next. For example:
+
+```js
+  app.get('main', '/main', function(page, model, params, next){
+    // ...
+  });
+```
+
+But also `this` in the function is `DerbyRouteController` witch provide some
+additional functionality (including to work with modules):
+
+| property | description |
+|----------|-------------|
+| this.name | |
+| this.app | |
+| this.page | |
+| this.model | |
+| this.params | |
+| this.path | |
+| this.next | |
+| this.render | |
+| this.loadModules | |
+| this.setupModules | |
+| this.addSubscriptions | |
+
+It's also possible to use a few functions in one route. For example:
+
+```js
+  function isAdmin(){
+    if (this.model.get('_session.user.admin'){
+      next();
+    } else {
+      next('User should be an admin to get access!');
+    }
+  }
+
+  app.get('admin', isAdmin, function(){
+    // ...
+  });
+```
+
+#### Router modules
+
+We added to derby-router optional possibility to use so called "router modules".
+It allow write routes declarative way and help to construct huge applications.
+
+Look at the example:
+
+```js
+  app.get('/main', function(page, model, params, next){
+    var userId = model.get('_session.userId');
+    var user = model.at('users.' + userId);
+
+    model.subscribe(user, function(){
+      user.ref('_page.user');
+      page.render('main');
+    });
+  });
+```
+
+The user-subscription is a frequent task. Often we should do it almost in all
+our routes. Router-modules will help us.
+
+First, note - working with subscriptions we often have two part of code: before
+subscription and after subscription. We called the parts: load-block and
+setup-block.
+
+Let's write the user-module:
+
+```js
+app.useRouterModule('user', {
+  load: function(){
+    var userId = model.get('_session.userId');
+    this.user = model.at('users.' + userId);
+    this.addSubscriptions(user);
+  },
+  setup: function(){
+    this.model.ref('_page.user', this.user);
+  }
+});
+```
+
+and use it in our handler:
+
+```js
+  app.get('/main', function(){
+    this.loadModules('user');
+
+    // setup all loaded modules
+    this.setupModules(function(){
+      // by defauld render use name of the route
+      // as a rendered template-name, so
+      // it's 'main'
+      this.render();
+    });
+  });
+```
+
+but there is more convenient way to use router-modules:
+
+```js
+  app.get('/main', ['user']);
+```
+
+Let's imagine more complex example. We should subscribe to the current user and
+then to all his friends.
+
+```js
+  app.get('/main', function(page, model, params, next){
+    var userId = model.get('_session.userId');
+    var user = model.at('users.' + userId);
+
+    model.subscribe(user, function(){
+      user.ref('_page.user');
+
+      var friends = model.query('users', user.path('friendIds'));
+
+      model.subscribe(friends, function(){
+        page.render('main');
+      };
+    });
+  });
+```
+
+Module 'friends' will be something like this:
+
+```js
+app.useRouterModule('friends', {
+  load: function(user){
+    var friends = model.query('users', user.user.path('friendIds'));
+    this.addSubscriptions(friends);
+  }
+  // We don't need setup-function here
+});
+```
+
+Note 'user'-parameter. It's a user-module. After, we can define router like this:
+
+```js
+  app.get('/main', ['user', 'friends']);
+```
+
+Derby-router understand dependencies and make "depencency injections".
+
+Also, we can combine functions with modules, f.e.:
+
+```js
+  app.get('/main', isAdmin, ['user', 'friends']);
+```
+
 
 
 
