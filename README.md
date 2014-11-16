@@ -172,17 +172,17 @@ additional functionality (including to work with modules):
 
 | property | description |
 |----------|-------------|
-| this.name | |
-| this.app | |
-| this.page | |
-| this.model | |
-| this.params | |
-| this.path | |
-| this.next | |
-| this.render | |
-| this.loadModules | |
-| this.setupModules | |
-| this.addSubscriptions | |
+| this.name | route name |
+| this.app | derby-app variable |
+| this.page | page - like in parameters |
+| this.model | model - like in parameters |
+| this.params | params - like in parameters |
+| this.path | route-path |
+| this.next | next - like in parameters |
+| this.render | render-function (by default render template with the name of the route) |
+| this.loadModules | function witch accept a list of module-names to perform load-function of the modules |
+| this.setupModules | the function subscribes to all of the loaded modules data and perform setup-functions of the loaded modules |
+| this.addSubscription | the function adds module subscription to the list. Subscribe to the list will be performed after in the setupModules-function |
 
 It's also possible to use a few functions in one route. For example:
 
