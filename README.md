@@ -67,12 +67,10 @@ application routes, and the same four types of server routes.
   app.del(...);
 
   // Server routes
-
   app.serverGet(...);
   app.serverPost(...);
   app.serverPut(...);
   app.serverDel(...);
-
 ```
 
 ### Route names and pathes
@@ -247,7 +245,6 @@ and use it in our handler:
 ```js
   app.get('/main', function(){
     this.loadModules('user');
-
     // setup all loaded modules
     this.setupModules(function(){
       // by defauld render use name of the route
