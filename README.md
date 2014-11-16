@@ -144,7 +144,7 @@ using `pathFor`-view function
 
 `path`: string (should starts with '/')
 
-handler: one of a list of route-handlers. May be omitted, if so `name`-template
+`handler`: one of a list of route-handlers. May be omitted, if so `name`-template
 will be rendered. There are two types of handlers:
 
 - handler-function
@@ -369,7 +369,7 @@ It's also possible to use a few functions in one route. For example:
   app.serverGet('admin', isAdmin, function(){
     // ...
   });
-```js
+```
 
 #### The way to hide server code from browser bundle
 
