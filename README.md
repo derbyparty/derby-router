@@ -412,7 +412,7 @@ Simple syntax: `pathFor(name, [param1, param2, ...])`
 
 - `name` - route-name
 - `param1`, `paramN` - route params in the order of the params in the
-route-path, from example:
+route-path, for example:
 
 ```js
 app.get('foobar', '/new/:foo/:bar+/(.*)', function(){
