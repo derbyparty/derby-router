@@ -88,7 +88,7 @@ Or even just:
 ```js
 app.get('main');
 ```
-Path will be extract automatically from the name: 'main' -> '/main'
+Path will be extracted automatically from the name: 'main' -> '/main'
 Look at the examples:
 
 | name | path |
@@ -403,7 +403,7 @@ app.get('item', '/items/:id', function(){
 ```
 
 ```html
-  <a href="{{pathFor('item', #item.id)}}">{{#item.name}}</a>
+<a href="{{pathFor('item', #item.id)}}">{{#item.name}}</a>
 ```
 
 There are two syntax for `pathFor`-function:
@@ -411,7 +411,7 @@ There are two syntax for `pathFor`-function:
 Simple syntax: `pathFor(name, [param1, param2, ...])`
 
 - `name` - route-name
-- `param1`, `paramN` - route params in the order of the params in the
+- `param1`, `paramN` - route parameters in the order of the params in the
 route-path, for example:
 
 ```js
@@ -428,7 +428,7 @@ app.get('foobar', '/new/:foo/:bar+/(.*)', function(){
 Object syntax: `pathFor(name, options)`
 
 - `name` - route-name
-- `options` - object of named route params, from example:
+- `options` - object of named route params, for example:
 
 ```js
 app.get('foobar', '/new/:foo/:bar+/(.*)', function(){
