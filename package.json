@@ -6,8 +6,18 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Artur Zayats",
+  "author": {
+    "name": "Artur Zayats",
+    "email": "zag2art@gmail.com"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/derbyparty/derby-router.git"
+  },
+  "bugs": {
+    "url": "https://github.com/derbyparty/derby-router/issues"
+  },
   "dependencies": {
     "async-each-series": "^0.1.1",
     "path-to-regexp": "^1.0.1"
