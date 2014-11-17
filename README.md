@@ -225,7 +225,7 @@ subscription and after subscription. We call this parts `load`-block and
 Let's write the user-module:
 
 ```js
-app.useRouterModule('user', {
+app.module('user', {
   load: function(){
     var userId = this.model.get('_session.userId');
     this.user = this.model.at('users.' + userId);
@@ -281,7 +281,7 @@ app.get('/main', function(page, model, params, next){
 Module 'friends' will be something like this:
 
 ```js
-app.useRouterModule('friends', {
+app.module('friends', {
   load: function(user){
     var friends = this.model.query('users', user.user.path('friendIds'));
     this.addSubscriptions(friends);
