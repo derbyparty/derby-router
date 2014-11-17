@@ -422,7 +422,7 @@ app.get('foobar', '/new/:foo/:bar+/(.*)', function(){
 Object syntax: `pathFor(name, options)`
 
 - `name` - route-name
-- `options` - object with named route params, fro example:
+- `options` - object with named route params, for example:
 
 ```js
 app.get('foobar', '/new/:foo/:bar+/(.*)', function(){
