@@ -218,11 +218,11 @@ app.get('/main', function(page, model, params, next){
 
 The user-subscription is a frequently used task. We usually do it in almost every route. Router-modules will help us to keep it DRY.
 
-First note that while working with subscriptions we often have two parts of code: before
-subscription and after subscription. We call this parts `load`-block and
+While working with subscriptions we often have two parts of code: **before
+subscription** and **after subscription**. We call this parts `load`-block and
 `setup`-block.
 
-Let's write the user-module:
+Let's write the `user`-module:
 
 ```js
 app.module('user', {
@@ -237,16 +237,15 @@ app.module('user', {
 });
 ```
 
-and use it in our handler:
+and use it in one of our handlers:
 
 ```js
 app.get('/main', function(){
   this.loadModules('user');
   // setup all loaded modules
   this.setupModules(function(){
-    // by defauld render use name of the route
-    // as a rendered template-name, so
-    // it's 'main'
+    // by default it renders view with the name of the route.     
+    // In this case it's 'main'
     this.render();
   });
 });
@@ -258,8 +257,8 @@ but there is more convenient way to use router-modules:
 app.get('/main', ['user']);
 ```
 
-Let's imagine more complex example. We should subscribe to the current user and
-then to all his friends.
+Let's try a more complex example. Let's say we want to subscribe to the 
+current user and then to all of his friends.
 
 ```js
 app.get('/main', function(page, model, params, next){
@@ -278,7 +277,7 @@ app.get('/main', function(page, model, params, next){
 });
 ```
 
-Module 'friends' will be something like this:
+'friends' module can look something like this:
 
 ```js
 app.module('friends', {
@@ -290,13 +289,13 @@ app.module('friends', {
 });
 ```
 
-Note 'user'-parameter. It's a user-module. After, we can define router like this:
+Note the `user` argument - it's a `user` module. We define router like this:
 
 ```js
 app.get('/main', ['user', 'friends']);
 ```
 
-Derby-router understand dependencies and make "depencency injections".
+Derby-router understands dependencies and makes "depencency injections".
 
 Also, we can combine functions with modules, f.e.:
 
@@ -306,31 +305,30 @@ app.get('/main', isAdmin, ['user', 'friends']);
 
 ### Server routes
 
-Server-routes are like derby-application routes, but without router-modules, and
-they have a little bit different API.
+Server-routes are like derby-application routes but without router-modules. 
+They have a bit different API.
 
-Basically, like in derby-application routes we can use four methods for
-server-routes: 'get', 'post', 'put', 'del'.
+Like in derby-application routes we can use four methods to
+define server-routes: `get`, `post`, `put`, `del`.
 
 Syntax: `app.serverMethod(name?, path?, [handlers]*, options?)`
 
 `Method`: one of 'Get', 'Post', 'Put', 'Del'
 
-`name`: string - name of the route, you can use the name to get specific url
-using `pathFor`-view function
+`name`: string. Name of the route, you can use it to obtain the corresponding URL using the `pathFor` view function.
 
 `path`: string (should starts with '/')
 
-`handlers`: a list of handler-functions. May be omitted, if so nothing will
-happen
+`handlers`: a list of handler-functions. You can omit it in which case nothing
+is going to happen.
 
-`options` - an object with options. At the moment you can define such options:
+`options` - an options object. You can specify the following options:
 
-- serverController - function - to override default server route-controller
+- serverController - function. Override the default server route-controller
 
 #### Handler-functions
 
-Handler-functions accept usual expressjs parameters: req, res and next. For
+Handler-functions accept usual expressjs parameters: `req`, `res` and `next`. For
 example:
 
 ```js
@@ -339,19 +337,18 @@ app.serverGet('api:time', '/api/time', function(req, res, next){
 });
 ```
 
-But also `this` in the function is `ServerRouteController` which provide some
-additional functionality:
+`this` inside handler-function is `ServerRouteController`. It provides access to additional properties:
 
 | property | description |
 |----------|-------------|
-| this.name | route name |
-| this.app | derby-app variable |
-| this.model | model - like in parameters |
+| this.name | route's name |
+| this.app | derby app that was used when defining server route |
+| this.model | model - derby model |
 | this.params | params - like in derby-application routes |
-| this.path | route-path |
-| this.next | next - like in parameters |
+| this.path | route's path |
+| this.next | next - the same as in arguments |
 
-It's also possible to use a few functions in one route. For example:
+You can also use several functions in one route. For example:
 
 ```js
 function isAdmin(){
@@ -390,7 +387,7 @@ app.serverPost('api:bar', '/api/bar', serverRoutes.bar);
 
 ## View-function `pathFor`
 
-For all routes we can get specific url in templates using view-function
+For all routes we can get a specific url in templates using view-function
 `pathFor`, for example:
 
 ```js
@@ -403,12 +400,12 @@ app.get('item', '/items/:id', function(){
 <a href="{{pathFor('item', #item.id)}}">{{#item.name}}</a>
 ```
 
-There are two syntax for `pathFor`-function:
+There are two syntaxes for `pathFor`-function:
 
 Simple syntax: `pathFor(name, [param1, param2, ...])`
 
 - `name` - route-name
-- `param1`, `paramN` - route parameters in the order of the params in the
+- `param1`, `paramN` - route parameters in the same order as params of
 route-path, for example:
 
 ```js
@@ -425,7 +422,7 @@ app.get('foobar', '/new/:foo/:bar+/(.*)', function(){
 Object syntax: `pathFor(name, options)`
 
 - `name` - route-name
-- `options` - object of named route params, from example:
+- `options` - object with named route params, fro example:
 
 ```js
 app.get('foobar', '/new/:foo/:bar+/(.*)', function(){
@@ -440,7 +437,7 @@ app.get('foobar', '/new/:foo/:bar+/(.*)', function(){
 </a>
 ```
 
-Note 0 param. For unnamed params like (.*) we use number-keys.
+Note **0** param. For unnamed params like `(.*)` we use number-keys.
 
 ### Query and hash
 
