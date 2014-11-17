@@ -23,8 +23,8 @@ app.get('main', '/main', function(page, model, params, next){
   })
 });
 
-// name route using this.model
-// and this.render() it's equal page.render('item')
+// you can access model via this.model
+// and page.render via this.render()
 app.get('item', '/item/:id', function(){
   var self = this;
   var item = this.model.at('items.' + this.params.id);
@@ -47,7 +47,7 @@ app.serverGet('time', '/api/time', function(req, res, next){
 
   {{each _page.items as #item}}
 
-    <!-- view function pathFor return right url-->
+    <!-- pathFor view function returns the right url -->
     <!-- like /item/4380fefc-001d-493a-aa2b-5e3d512e587d -->
     <a href="{{pathFor('item', #item.id)}}">{{#item.name}}</a>
   {{/each}}
@@ -56,11 +56,11 @@ app.serverGet('time', '/api/time', function(req, res, next){
 
 ## Routes
 
-Derby-router allows to create 'get', 'post', 'put' and 'del' types of derby
-application routes, and the same four types of server routes.
+Derby-router allows to create routes for `get`, `post`, `put` and `del` requests
+for both **derby-** and **server-** sides.
 
 ```js
-// derby-app routes
+// Derby-app routes
 app.get(...);
 app.post(...);
 app.put(...);
@@ -73,38 +73,38 @@ app.serverPut(...);
 app.serverDel(...);
 ```
 
-### Route names and pathes
+### Route names and paths
 
 First two parameters in routes are `name` and `path`. For example:
 ```js
 app.get('main', '/main');
 ```
-To tell the truth the order is not important, so you can define the route like
-this:
+Their order is not actually important, so you can define the route like this:
 ```js
 app.get('/main', 'main');
 ```
-Or even just:
+Or simply:
 ```js
 app.get('main');
 ```
-Path will be extracted automatically from the name: 'main' -> '/main'
-Look at the examples:
+In the latter case the path is going to be generated automatically from the route name: 'main' -> '/main'.
+Here are some more examples:
 
 | name | path |
 |------|------|
 | main | /main |
 | items:item | /items/item |
 
-That is quite convinient for sipmle pathes, also possible to define only `pathes`,
-so `names` will be converted automatically. For example you can define the route
-like this:
+This is quite convinient for sipmle paths. 
+
+It's also possible to define only **paths** -- in this case **names** are gonna be converted automatically. 
+For example you can define the route like this:
 
 ```js
 app.get('/main');
 ```
 
-A few examples:
+A few more examples:
 
 | path | name |
 |------|------|
@@ -113,13 +113,13 @@ A few examples:
 | /articles/:id | articles:id |
 | / | home (special case) |
 
-Of course the best way is to define both `name` and `path` explicitly.
+The recommended way is to define both `name` and `path` explicitly.
 
 ### Path parameters
 
-Derby-router use [path-to-regexp](https://github.com/pillarjs/path-to-regexp) to
-parse pathes. It's express-like parsing engine. Take a look at
-[path-to-regexp](https://github.com/pillarjs/path-to-regexp) docs.
+Derby-router uses [path-to-regexp](https://github.com/pillarjs/path-to-regexp) to
+parse paths. It's express-like parsing engine. Take a look at
+[path-to-regexp](https://github.com/pillarjs/path-to-regexp) docs to find out more.
 
 Short list of possibilities:
 
@@ -139,26 +139,25 @@ Syntax: `app.method(name?, path?, [handler]*, options?)`
 
 `method`: one of 'get', 'post', 'put', 'del'
 
-`name`: string - name of the route, you can use the name to get specific url
-using `pathFor`-view function
+`name`: string - name of the route, you can use it to obtain the corresponding URL using the `pathFor` view function.
 
 `path`: string (should starts with '/')
 
-`handler`: one of a list of route-handlers. May be omitted, if so `name`-template
-will be rendered. There are two types of handlers:
+`handler`: one of a list of route-handlers. You can omit it, in which case the `name`-template
+is going to be rendered. There are two types of handlers:
 
 - handler-function
 - array of route-modules (more on this later)
 
-`options` - an object with options. At the moment you can define such options:
+`options` - an options object. You can specify the following options:
 
-- dontRender - boolean - if you don't with to render route by default
-- derbyController - function - to override default derby-application route-controller
+- dontRender - boolean. By default the route's view is being rendered automatically. Set this option to `true` to prevent it.
+- derbyController - function. Overrides default derby-app route-controller
 
 #### Handler-functions
 
-For derby-application handler-functions accept usual parameters: page, model,
-params, and next. For example:
+Derby-application handler-functions accept the same arguments as the original derby router: `page`, `model`,
+`params` and `next`. For example:
 
 ```js
 app.get('main', '/main', function(page, model, params, next){
@@ -166,24 +165,23 @@ app.get('main', '/main', function(page, model, params, next){
 });
 ```
 
-But also `this` in the function is `DerbyRouteController` which provide some
-additional functionality:
+`this` inside handler-function is `DerbyRouteController`. It provides access to additional properties:
 
 | property | description |
 |----------|-------------|
 | this.name | route name |
 | this.app | derby-app variable |
-| this.page | page - like in parameters |
-| this.model | model - like in parameters |
-| this.params | params - like in parameters |
+| this.page | page - the same as in arguments |
+| this.model | model - the same as in arguments |
+| this.params | params - the same as in arguments |
 | this.path | route-path |
-| this.next | next - like in parameters |
-| this.render | render-function (by default render template with the name of the route) |
-| this.loadModules | function which accept a list of module-names to perform load-function of the modules |
-| this.setupModules | the function subscribes to all of the loaded modules data and perform setup-functions of the loaded modules |
-| this.addSubscription | the function adds module subscription to the list. Subscribe to the list will be performed after in the setupModules-function |
+| this.next | next - the same as in arguments |
+| this.render | render-function (by default the router renders template with the name of the route) |
+| this.loadModules | function which accepts a list of **modules' names** and executes their `load` functions |
+| this.setupModules | this function subscribes to all of the loaded modules' data and exetutes their `setup` functions |
+| this.addSubscription | this function adds module subscriptions to the list. The actual subscribtion for the whole list will be done later in `this.setupModules` function |
 
-It's also possible to use a few functions in one route. For example:
+It's also possible to use several functions in one route. For example:
 
 ```js
 function isAdmin(){
@@ -201,10 +199,10 @@ app.get('admin', isAdmin, function(){
 
 #### Router modules
 
-We added to derby-router optional possibility to use so called "router modules".
-It allow write routes declarative way and help to construct huge applications.
+With derby-router you can use so called "router modules".
+derby-router allow you to write routes in a declarative way and to easily assemble big applications while keeping your code DRY. To achieve this you need to write so called "router modules" and plug them into various routes.
 
-Look at the example:
+Here is a simple example:
 
 ```js
 app.get('/main', function(page, model, params, next){
@@ -218,12 +216,11 @@ app.get('/main', function(page, model, params, next){
 });
 ```
 
-The user-subscription is a frequent task. Often we should do it almost in all
-our routes. Router-modules will help us.
+The user-subscription is a frequently used task. We usually do it in almost every route. Router-modules will help us to keep it DRY.
 
-First, note - working with subscriptions we often have two part of code: before
-subscription and after subscription. We called the parts: load-block and
-setup-block.
+First note that while working with subscriptions we often have two parts of code: before
+subscription and after subscription. We call this parts `load`-block and
+`setup`-block.
 
 Let's write the user-module:
 
@@ -428,7 +425,7 @@ app.get('foobar', '/new/:foo/:bar+/(.*)', function(){
 Object syntax: `pathFor(name, options)`
 
 - `name` - route-name
-- `options` - object of named route params, for example:
+- `options` - object of named route params, from example:
 
 ```js
 app.get('foobar', '/new/:foo/:bar+/(.*)', function(){
