@@ -303,6 +303,34 @@ Also, we can combine functions with modules, f.e.:
 app.get('/main', isAdmin, ['user', 'friends']);
 ```
 
+##### Extended module syntax to avoid minification issues
+
+Insead of
+
+```js
+app.module('friends', {
+  load: function(user){
+    var friends = this.model.query('users', user.user.path('friendIds'));
+    this.addSubscriptions(friends);
+  }
+  // We don't need setup-function here
+});
+```
+
+we can write:
+
+```js
+app.module('friends', {
+  load: ['user', function(user){
+    var friends = this.model.query('users', user.user.path('friendIds'));
+    this.addSubscriptions(friends);
+  }]
+  // We don't need setup-function here
+});
+```
+
+It allows to avoid minification names degradation.
+
 ### Server routes
 
 Server-routes are like derby-application routes but without router-modules. 
