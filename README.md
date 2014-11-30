@@ -177,6 +177,7 @@ app.get('main', '/main', function(page, model, params, next){
 | this.path | route-path |
 | this.next | next - the same as in arguments |
 | this.render | render-function (by default the router renders template with the name of the route) |
+| this.redirect | redirect function with params like in pathFor |
 | this.loadModules | function which accepts a list of **modules' names** and executes their `load` functions |
 | this.setupModules | this function subscribes to all of the loaded modules' data and exetutes their `setup` functions |
 | this.addSubscription | this function adds module subscriptions to the list. The actual subscribtion for the whole list will be done later in `this.setupModules` function |
@@ -375,6 +376,7 @@ app.serverGet('api:time', '/api/time', function(req, res, next){
 | this.params | params - like in derby-application routes |
 | this.path | route's path |
 | this.next | next - the same as in arguments |
+| this.redirect | redirect function with params like in pathFor |
 
 You can also use several functions in one route. For example:
 
