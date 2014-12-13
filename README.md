@@ -415,6 +415,33 @@ app.serverPost('api:foo', '/api/foo', serverRoutes.foo);
 app.serverPost('api:bar', '/api/bar', serverRoutes.bar);
 ```
 
+### External routes
+
+External routes are useful when you have a lot of external url and you want to 
+use them by names via `pathFor`-function.
+
+```js
+app.route('twitter:search', 'https://api.twitter.com/1.1/users/search.json');
+
+// ...
+
+var url = app.pathFor('twitter:search', {
+  $query: {
+    q: 'Twitter API',
+    page: 1,
+    count: 3
+  }
+};
+
+// https://api.twitter.com/1.1/users/search.json?q=Twitter%20API&page=1&count=3 
+
+$.get(url, function(err, data){
+  // ....
+});
+```
+
+`route`-function has two hard-coded parameters: `name` and `path`.
+
 ## View-function `pathFor`
 
 For all routes we can get a specific url in templates using view-function
@@ -428,6 +455,13 @@ app.get('item', '/items/:id', function(){
 
 ```html
 <a href="{{pathFor('item', #item.id)}}">{{#item.name}}</a>
+```
+
+Also you can use pathFor function right in the code:
+
+```js
+  var url = app.pathFor('item', itemId);
+  // ...
 ```
 
 There are two syntaxes for `pathFor`-function:
