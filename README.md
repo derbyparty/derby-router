@@ -417,7 +417,7 @@ app.serverPost('api:bar', '/api/bar', serverRoutes.bar);
 
 ### External routes
 
-External routes are useful when you have a lot of external url and you want to 
+External routes are useful when you have a lot of external urls and you want to 
 use them by names via `pathFor`-function.
 
 ```js
