@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "async-each-series": "^0.1.1",
-    "path-to-regexp": "^1.0.1"
+    "path-to-regexp": "^1.0.1",
+    "waiter": "^0.1.1"
   }
 }

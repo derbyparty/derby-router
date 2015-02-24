@@ -180,7 +180,8 @@ app.get('main', '/main', function(page, model, params, next){
 | this.redirect | redirect function with params like in pathFor |
 | this.loadModules | function which accepts a list of **modules' names** and executes their `load` functions |
 | this.setupModules | this function subscribes to all of the loaded modules' data and exetutes their `setup` functions |
-| this.addSubscription | this function adds module subscriptions to the list. The actual subscribtion for the whole list will be done later in `this.setupModules` function |
+| this.addSubscriptions | this function adds module subscriptions to the list. The actual subscribtion for the whole list will be done later in `this.setupModules` function |
+| this.addFetches | this function adds module fetches to the list. The actual fetch for the whole list will be done later in `this.setupModules` function |
 
 It's also possible to use several functions in one route. For example:
 
@@ -230,7 +231,7 @@ app.module('user', {
   load: function(){
     var userId = this.model.get('_session.userId');
     this.user = this.model.at('users.' + userId);
-    this.addSubscription(this.user);
+    this.addSubscriptions(this.user);
   },
   setup: function(){
     this.model.ref('_page.user', this.user);
@@ -284,7 +285,7 @@ app.get('/main', function(page, model, params, next){
 app.module('friends', {
   load: function(user){
     var friends = this.model.query('users', user.user.path('friendIds'));
-    this.addSubscription(friends);
+    this.addSubscriptions(friends);
   }
   // We don't need setup-function here
 });
@@ -312,7 +313,7 @@ Insead of
 app.module('friends', {
   load: function(user){
     var friends = this.model.query('users', user.user.path('friendIds'));
-    this.addSubscription(friends);
+    this.addSubscriptions(friends);
   }
   // We don't need setup-function here
 });
