@@ -1,5 +1,7 @@
 ## Derby 0.6 router
 
+[![NPM](https://nodei.co/npm/derby-router.png?downloads=true)](https://nodei.co/npm/derby-router/)
+
 ### Getting started
 
 Install: `npm install derby-router`
